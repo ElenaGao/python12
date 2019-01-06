@@ -114,19 +114,20 @@ class TestgenerateRepayments(unittest.TestCase):
                 do_excel.write_result_by_case_id('generateRepayments',case.case_id,resp.get_text(),TestResult)
                 raise e
         # 生成回款计划 校验数据库
-        select_invest = 'SELECT * FROM invest a inner join repayment b on a.id = b.investid where MemberID = {0}'.format(Context.normal_member_id)
+        select_invest = 'SELECT * FROM future.invest a inner join future.repayment b on a.id = b.investid  where MemberID = {0} order by investid desc'.format(Context.normal_member_id)
         invest = mysql.fetch_one(select_invest) #查询回款记录
         if resp_dict['msg'] == '生成回款计划成功':
             if invest is not None:
-                self.assertEqual(resp_dict['data'][0]['investId'],invest['InvestId'])
+                self.assertEqual(resp_dict['data'][0]['investId'],str(invest['InvestId']))
                 TestResult = 'PASS'
                 do_excel.write_result_by_case_id('generateRepayments',case.case_id,resp.get_text(),TestResult)
             else:
                 TestResult = 'Fail'
                 do_excel.write_result_by_case_id('generateRepayments',case.case_id,resp.get_text(),TestResult)
                 raise AssertionError
-        elif resp_dict['status'] == 0:
-            if invest is None:
+        elif resp_dict['code'] != 10001:
+            if invest is not None:
+                self.assertEqual(str(case.expected),resp_dict['code'])
                 TestResult = 'PASS'
                 do_excel.write_result_by_case_id('generateRepayments',case.case_id,resp.get_text(),TestResult)
             else:

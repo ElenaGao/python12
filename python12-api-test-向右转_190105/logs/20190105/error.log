@@ -1,0 +1,5 @@
+2019-01-05 23:49:19,539-ERROR-error!!!
+Traceback (most recent call last):
+  File "E:/ningmeng/python12-api-test-向右转_190104/common/logger.py", line 91, in <module>
+    raise AssertionError
+AssertionError
